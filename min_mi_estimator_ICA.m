@@ -1,4 +1,4 @@
-function [Rica, Wica, Rpca, Wpca] = mutual_information_ICA(X, K, n_random_initializations, random_seed, plot_figures)
+function [Rica, Wica, Rpca, Wpca] = min_mi_estimator_ICA(X, K, fHandle, fArgs, n_random_initializations, random_seed, plot_figures)
 % function mutual_information_ICA(X, K, n_repetitions, plot_figures, random_seed)
 % 
 % Top-level script for running mutual-information based ICA analysis. X is
@@ -48,15 +48,15 @@ function [Rica, Wica, Rpca, Wpca] = mutual_information_ICA(X, K, n_random_initia
 % corr(R,Rpca)
 % corr(R,Rica)
 
-if nargin < 3
+if nargin < 5
     n_random_initializations = 3;
 end
 
-if nargin < 4
+if nargin < 6
     plot_figures = 0;
 end
 
-if nargin < 5
+if nargin < 7
     random_seed = 1;
 end
 
@@ -75,8 +75,7 @@ Rpca = U(:,1:K) * S(1:K,1:K);
 Wpca = V(:,1:K)';
 
 % rotate PCA components to minimize mutual information
-% Wica = minimize_mutual_information_via_rotation(Wpca, n_random_initializations, random_seed, plot_figures);
-Wica = minimize_knn6mi_via_rotation(Wpca, n_random_initializations, random_seed, plot_figures);
+Wica = minimize_via_rotation(Wpca, n_random_initializations, fHandle, fArgs, random_seed, plot_figures);
 
 % estimate basis functions
 Rica = X_zero_mean_rows*pinv(Wica);
