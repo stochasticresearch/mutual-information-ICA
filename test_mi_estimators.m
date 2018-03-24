@@ -4,7 +4,7 @@ clear;
 clc;
 
 if(ispc)
-    folder = 'C:\\ownCloud\\PhD\\sim_results\\ica\\synthetic';
+    folder = 'C:\\Users\\Kiran\\ownCloud\\PhD\\sim_results\\ica\\synthetic';
 elseif(ismac)
     folder = '/Users/Kiran/ownCloud/PhD/sim_results/ica/synthetic';
 else
@@ -41,6 +41,14 @@ if(exist(outputFname,'file'))
     snrIdxStart = snrIdx;
     nIdxStart = nIdx;
     mcSimNumStart = mcSimNum + 1; % the value that is saved is what we last completed, so start at the next one
+    if(mcSimNumStart>numMCSims)
+        mcSimNumStart = 1;
+        nIdxStart = nIdxStart + 1;
+    end
+    if(nIdxStart>length(nVec))
+        nIdxStart = 1;
+        snrIdxStart = snrIdxStart + 1;
+    end
 else
     snrIdxStart = 1;
     nIdxStart = 1;
