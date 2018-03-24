@@ -93,5 +93,7 @@ for snrIdx=snrIdxStart:length(SNRVec)
             % save the progress to ownCloud
             save(outputFname);
         end
+        mcSimNumStart = 1;
     end
+    nIdxStart = 1;
 end
