@@ -61,9 +61,9 @@ for snrIdx=snrIdxStart:length(SNRVec)
     SNR = SNRVec(snrIdx);
     for nIdx=nIdxStart:length(nVec)
         n = nVec(nIdx);
-        
         % Generate ground truth
         t          = @(n,T) linspace(0,1,n) * 2 * pi * T;
+        Ztrue      = zeros(3,n);
         Ztrue(1,:) = sin(t(n,T(1)));            % Sinusoid
         Ztrue(2,:) = sign(sin(t(n,T(2))));      % Square
         Ztrue(3,:) = sawtooth(t(n,T(3)));       % Sawtooth
