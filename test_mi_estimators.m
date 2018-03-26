@@ -97,3 +97,87 @@ for snrIdx=snrIdxStart:length(SNRVec)
     end
     nIdxStart = 1;
 end
+
+%% Analyse the results
+
+clear;
+clc;
+
+if(ispc)
+    folderNow = 'C:\\Users\\Kiran\\ownCloud\\PhD\\sim_results\\ica\\synthetic';
+elseif(ismac)
+    folderNow = '/Users/Kiran/ownCloud/PhD/sim_results/ica/synthetic';
+else
+    folderNow = '/home/kiran/ownCloud/PhD/sim_results/ica/synthetic';
+end
+
+rng(12345);
+
+fHandles = {@cim; @KraskovMI_cc_Mex; @KraskovMI_cc_mex; @KraskovMI_cc_mex; ...
+            @apMI_interface; @vmeMI_interface};
+fArgs = {{}; {1}; {6}; {20}; {}; {}};
+estimatorNames = {'CIM', 'KNN-1', 'KNN-6', 'KNN-20', 'AP', 'vME'};
+
+estimatorsToAnalyze = [1, 2, 3, 4];
+
+% Plot Style 1 -- Plot different SNR's against a given N
+snrsToPlot = [0,5,10,15];
+nToPlot = 200;
+figure;
+for ii=1:length(snrsToPlot)    
+    snrToPlot = snrsToPlot(ii);
+
+    estimatorNamesOutput = cell(1,length(estimatorsToAnalyze));
+    for estimatorIdx=1:length(estimatorsToAnalyze)
+        estimator = estimatorsToAnalyze(estimatorIdx);
+        estimatorName = estimatorNames{estimatorIdx};
+        outputFname = fullfile(folderNow,sprintf('ica_%s_results.mat',estimatorName));
+        load(outputFname);
+
+        % find the index associated w/ the n and SNR to plot
+        nIdx = find(nVec==nToPlot);
+        snrIdx = find(SNRVec==snrToPlot);
+
+        plotData(:,estimatorIdx) = icaScoreVec(snrIdx,nIdx,:);   
+        estimatorNamesOutput{estimatorIdx} = estimatorName;
+    end
+
+    subplot(2,2,ii);
+    boxplot(plotData,estimatorNamesOutput,'Notch','on');
+    xlabel('MI Estimator');
+    ylabel('ICA Signal Separation Score');
+    title(sprintf('n=%d SNR=%d dB',nToPlot,snrToPlot));
+end
+
+% Plot Style 2 -- Plot different N's given an SNR
+snrToPlot = 15;
+nVecToPlot = [100, 200, 500];
+figure;
+for ii=1:length(nVecToPlot)    
+    nToPlot = nVecToPlot(ii);
+
+    estimatorNamesOutput = cell(1,length(estimatorsToAnalyze));
+    for estimatorIdx=1:length(estimatorsToAnalyze)
+        estimator = estimatorsToAnalyze(estimatorIdx);
+        estimatorName = estimatorNames{estimatorIdx};
+        outputFname = fullfile(folderNow,sprintf('ica_%s_results.mat',estimatorName));
+        load(outputFname);
+
+        % find the index associated w/ the n and SNR to plot
+        nIdx = find(nVec==nToPlot);
+        snrIdx = find(SNRVec==snrToPlot);
+
+        plotData(:,estimatorIdx) = icaScoreVec(snrIdx,nIdx,:);   
+        estimatorNamesOutput{estimatorIdx} = estimatorName;
+    end
+
+    subplot(1,3,ii);
+    boxplot(plotData,estimatorNamesOutput,'Notch','on');
+    if(ii==2)
+        xlabel('MI Estimator');
+    end
+    if(ii==1)
+        ylabel('ICA Signal Separation Score');
+    end
+    title(sprintf('n=%d SNR=%d dB',nToPlot,snrToPlot));
+end
