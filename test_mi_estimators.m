@@ -4,16 +4,16 @@ clear;
 clc;
 
 if(ispc)
-    folder = 'C:\\Users\\Kiran\\ownCloud\\PhD\\sim_results\\ica\\synthetic';
+    folder = 'C:\\Users\\Kiran\\ownCloud\\PhD\\sim_results\\ica\\synthetic\\full_sweep';
 elseif(ismac)
-    folder = '/Users/Kiran/ownCloud/PhD/sim_results/ica/synthetic';
+    folder = '/Users/Kiran/ownCloud/PhD/sim_results/ica/synthetic/full_sweep';
 else
-    folder = '/home/kiran/ownCloud/PhD/sim_results/ica/synthetic';
+    folder = '/home/kiran/ownCloud/PhD/sim_results/ica/synthetic/full_sweep';
 end
 
 rng(12345);
 
-fHandles = {@cim; @KraskovMI_cc_Mex; @KraskovMI_cc_mex; @KraskovMI_cc_mex; ...
+fHandles = {@cim; @KraskovMI_cc_mex; @KraskovMI_cc_mex; @KraskovMI_cc_mex; ...
             @apMI_interface; @vmeMI_interface};
 fArgs = {{}; {1}; {6}; {20}; {}; {}};
 estimatorNames = {'CIM', 'KNN-1', 'KNN-6', 'KNN-20', 'AP', 'vME'};
@@ -25,10 +25,10 @@ fArg = fArgs{estimatorIdx};
 estimatorName = estimatorNames{estimatorIdx};
 outputFname = fullfile(folder,sprintf('ica_%s_results.mat',estimatorName));
 
-numMCSims = 25;
-nVec   = [100,200,500];             % # samples
+numMCSims = 100;
+nVec   = [50, 100, 200, 500, 1000];             % # samples
 T   = [3, 4, 5];        % # periods for each signal
-SNRVec = [0,5,10,15];               % Signal SNR
+SNRVec = [-15, -10, -5, 0, 5, 10, 15];               % Signal SNR
 d   = 3;                % # mixed observations
 r   = 3;                % # independent/principal components
 
@@ -80,7 +80,7 @@ for snrIdx=snrIdxStart:length(SNRVec)
             Zmixed = A * Znoisy;
 
             K = 3; 
-            n_random_initializations = 1; 
+            n_random_initializations = 3; 
             random_seed = 1;
             plot_figures = 0;
             
